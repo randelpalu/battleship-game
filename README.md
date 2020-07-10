@@ -1,2 +1,2 @@
 # battleship-game
-Battleship game (using React)
+Battleship game (using React.js)
