@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import {GameContext} from './GameContext';
+import React from 'react';
 import Board from "./Board";
 
 export const USER = "Player1";
@@ -33,18 +32,12 @@ export const NPC_GRID = [
 ];
 
 export default function Game() {
-  const [playerTurn, setPlayerTurn] = useState(true);
-
-  function whosTurn() {
-    return playerTurn === true ? USER : NPC;
-  }
 
   return (
-    <GameContext.Provider value={{playerTurn, setPlayerTurn}}>
-      <h3>{ whosTurn() } turn</h3> 
+    <>
       <div className="game">
         <Board />
       </div>
-    </GameContext.Provider>
+    </>
   );
 }
