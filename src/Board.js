@@ -2,16 +2,16 @@ import React, {useEffect, useRef, useState} from "react";
 import {GRID_SIZE, NPC, NPC_GRID, USER, USER_GRID} from "./Game";
 import NonBombableGrid from "./NonBombableGrid";
 import BombableGrid from "./BombableGrid";
-import {BoardContext} from "./BoardContext";
+
+export const BOAT_LOCATION = '0';
+export const EMPTY_LOCATION = '';
+export const HIT = 'X';
+export const MISS = '-';
 
 export default function Board() {
-    const [userGrid, setUserGrid] = useState(() => {  // NPC bombs this !
-        return USER_GRID;
-    });
-    const [NPCGrid, setNPCGrid] = useState(() => {  // Human player bombs this !
-        return NPC_GRID;
-    });
-    const userTurnRef = useRef(true);  // Human player turn or not.
+    const [userGrid, setUserGrid] = useState(USER_GRID);  // NPC bombs this.
+    const [NPCGrid, setNPCGrid] = useState(NPC_GRID);    // Human player bombs this.
+    const [userTurn, setUserTurn] = useState(true);  // Human player turn or not.
     const bombableLocationsForNPCRef = useRef();  // Array or remaining bombable locations for NPC.
 
     useEffect(()=> {
@@ -23,20 +23,48 @@ export default function Board() {
     },[]);
 
     const toggleTurn = () => {
-        userTurnRef.current = !userTurnRef.current;
+        return setUserTurn(!userTurn);
+    }
+
+    const removeFromBombableLocations = (index) => {
+        bombableLocationsForNPCRef.current.splice(index, 1);
+    }
+
+    const changeUserGrid = (targetIndex, newStatus) => {
+        let arr = [...userGrid];
+        arr[targetIndex] = newStatus;
+        setUserGrid(arr);
+    }
+
+    const NPCToBombLocation = (targetIndex) => {
+        const locationStatus  = userGrid[targetIndex];
+
+        if(locationStatus === EMPTY_LOCATION){
+            removeFromBombableLocations(targetIndex);
+            changeUserGrid(targetIndex, MISS);
+            toggleTurn();
+        }else if(locationStatus === BOAT_LOCATION){
+            removeFromBombableLocations(targetIndex);
+            changeUserGrid(targetIndex, HIT);
+        }
+
     }
 
     // NPC-s turn to bomb !
-    if (userTurnRef.current===false) {
-        let target = Math.floor(Math.random() * bombableLocationsForNPCRef.current.length);
-        console.log(target);
+    if (userTurn===false) {
+        let targetIndex = Math.floor(Math.random() * bombableLocationsForNPCRef.current.length);
+        NPCToBombLocation(targetIndex);
     }
 
     return (
-        <BoardContext.Provider value={{userTurnRef, toggleTurn}}>
-            <NonBombableGrid value={{ owner:USER, userGrid, setUserGrid, bombableLocationsForNPCRef }}/>
+        <>
+            <NonBombableGrid value={{ owner:USER, userTurn, toggleTurn,
+                userGrid, setUserGrid }}
+            />
             &nbsp;&nbsp;
-            <BombableGrid value={{ owner:NPC, NPCGrid, setNPCGrid}}/>
-        </BoardContext.Provider>
+            <BombableGrid value={{ owner:NPC,  userTurn, toggleTurn,
+                NPCGrid, setNPCGrid}}
+            />
+        </>
     )
 }

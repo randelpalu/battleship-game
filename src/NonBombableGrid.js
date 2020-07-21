@@ -1,10 +1,7 @@
-import React, {useContext} from "react";
+import React from "react";
 import {GRID_SIZE} from "./Game";
-import {GridContext} from "./GridContext";
-import {BoardContext} from "./BoardContext";
 
 export default function NonBombableGrid(props) {
-    const board = useContext(BoardContext);
     let col = 0;
 
     const DrawRow = ()  => {
@@ -34,14 +31,14 @@ export default function NonBombableGrid(props) {
             <div className="game-board">
                 {props.value.owner} ships
                 {rows}
-                <button onClick={()=> board.toggleTurn()}>Tere</button>
+                <button onClick={()=> props.value.toggleTurn()}>Toggle turn</button>
             </div>
         );
     }
 
     return (
-        <GridContext.Provider value={{owner: props.value.owner}}>
+        <>
             {DrawGrid()}
-        </GridContext.Provider>
+        </>
     )
 }

@@ -1,7 +1,4 @@
-import React, {useContext, useState} from "react";
-import {BoardContext} from "./BoardContext";
-import {GridContext} from "./GridContext";
-import {USER, NPC} from './Game';
+import React from "react";
 
 const BOAT_LOCATION = '0';
 const EMPTY_LOCATION = '';
@@ -9,32 +6,26 @@ const HIT = 'X';
 const MISS = '-';
 
 export default function Square(props) {
-    const [state] = useState(props.value.startingState);
-    const grid = useContext(GridContext);
-    const board = useContext(BoardContext);
+    const location = props.value.NPCGrid[props.value.id];
+
+    const bombLocation = (bombingResult) => {
+        let newNPCGrid = [...props.value.NPCGrid];
+        newNPCGrid[props.value.id] = bombingResult;
+        props.value.setNPCGrid(newNPCGrid);
+    }
 
     const onClick = () => {
-        // Player bombing on correct grid.
-        if ((grid.owner !== USER & board.userTurnRef.current) | (grid.owner !== NPC & !board.userTurnRef.current)){
-            if(state === EMPTY_LOCATION){
-                //setState(MISS);
-                let newNPCGrid = [...props.value.NPCGrid];
-                newNPCGrid[props.value.id] = MISS;
-                props.value.setNPCGrid(newNPCGrid);
-                board.toggleTurn();
-            }else if(state === BOAT_LOCATION){
-                //setState(HIT);
-                console.log(props.value.NPCGrid);
-                let newNPCGrid = [...props.value.NPCGrid];
-                newNPCGrid[props.value.id] = HIT;
-                props.value.setNPCGrid(newNPCGrid);
-                console.log(newNPCGrid);
+        if (props.value.userTurn){
+            if(location === EMPTY_LOCATION){
+                bombLocation(MISS);
+                props.value.toggleTurn();
+            }else if(location === BOAT_LOCATION){
+                bombLocation(HIT);
             }
         }
     }
 
     return (
-        // <button className="square" onClick={onClick}>{props.value.id}</button>
-        <button className="square" onClick={onClick}>{props.value.NPCGrid[props.value.id]}</button>
+        <button className="square" onClick={onClick}>{location}</button>
     )
 }
