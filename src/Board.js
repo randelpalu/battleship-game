@@ -26,34 +26,41 @@ export default function Board() {
         return setUserTurn(!userTurn);
     }
 
-    const removeFromBombableLocations = (index) => {
-        bombableLocationsForNPCRef.current.splice(index, 1);
+    const removeTargetFromBombableLocations = (value) => {
+        for(let i = 0; i < bombableLocationsForNPCRef.current.length; i++){
+            if(bombableLocationsForNPCRef.current[i] === value){
+                bombableLocationsForNPCRef.current.splice(i, 1);
+                break;
+            }
+        }
     }
 
-    const changeUserGrid = (targetIndex, newStatus) => {
+    const changeUserGrid = (index, newStatus) => {
         let arr = [...userGrid];
-        arr[targetIndex] = newStatus;
+        arr[index] = newStatus;
         setUserGrid(arr);
     }
 
-    const NPCToBombLocation = (targetIndex) => {
-        const locationStatus  = userGrid[targetIndex];
+    const NPCToBombLocation = (gridTarget) => {
+        const locationStatus  = userGrid[gridTarget];
 
         if(locationStatus === EMPTY_LOCATION){
-            removeFromBombableLocations(targetIndex);
-            changeUserGrid(targetIndex, MISS);
+            removeTargetFromBombableLocations(gridTarget);
+            changeUserGrid(gridTarget, MISS);
             toggleTurn();
         }else if(locationStatus === BOAT_LOCATION){
-            removeFromBombableLocations(targetIndex);
-            changeUserGrid(targetIndex, HIT);
+            removeTargetFromBombableLocations(gridTarget);
+            changeUserGrid(gridTarget, HIT);
         }
-
     }
 
     // NPC-s turn to bomb !
     if (userTurn===false) {
-        let targetIndex = Math.floor(Math.random() * bombableLocationsForNPCRef.current.length);
-        NPCToBombLocation(targetIndex);
+        //  Random index from an array.
+        const index = Math.floor(Math.random() * bombableLocationsForNPCRef.current.length);
+        //  Value from that random index.
+        const gridTarget = bombableLocationsForNPCRef.current[index];
+        NPCToBombLocation(gridTarget);
     }
 
     return (
