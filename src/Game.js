@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Board from "./Board";
 
 export const USER = "Player1";
@@ -31,6 +31,8 @@ export const NPC_GRID = [
 ];
 
 export default function Game() {
+  const [gameState, setGameState] = useState('playing');
+
   return (
     <>
       <div className="game">
