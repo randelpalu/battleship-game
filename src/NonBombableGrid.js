@@ -1,7 +1,7 @@
 import React from "react";
 import {GRID_SIZE} from "./Game";
 
-export default function NonBombableGrid(props) {
+export default function NonBombableGrid({owner, userGrid}) {
     let col = 0;
 
     const DrawRow = ()  => {
@@ -9,7 +9,7 @@ export default function NonBombableGrid(props) {
         let accumulator = GRID_SIZE * col;
 
         for (let i = accumulator; i < (GRID_SIZE + accumulator); i++) {
-            rows.push(<button className="square" key={i}>{props.value.userGrid[i]}</button>);
+            rows.push(<button className="square" key={i}>{userGrid[i]}</button>);
         }
         col++;
 
@@ -24,21 +24,26 @@ export default function NonBombableGrid(props) {
         let rows = [];
 
         for (let i = 0; i < GRID_SIZE; i++) {
-            rows.push(DrawRow());
+            rows.push(
+                <div id={i}>
+                    {DrawRow()}
+                </div>
+            );
         }
 
         return (
-            <div className="game-board">
-                {props.value.owner} ships
+            <>
+                {owner} ships
                 {rows}
-                <button onClick={()=> props.value.toggleTurn()}>Toggle turn</button>
-            </div>
+            </>
         );
     }
 
     return (
         <>
-            {DrawGrid()}
+            <div className="game-board">
+                {DrawGrid()}
+            </div>
         </>
     )
 }

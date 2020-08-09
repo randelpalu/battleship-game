@@ -5,27 +5,29 @@ const EMPTY_LOCATION = '';
 const HIT = 'X';
 const MISS = '-';
 
-export default function Square(props) {
-    const location = props.value.NPCGrid[props.value.id];
+export default function Square({id, NPCGrid, setNPCGrid, userTurn, toggleTurn}) {
+    const location = NPCGrid[id];
 
-    const bombLocation = (bombingResult) => {
-        let newNPCGrid = [...props.value.NPCGrid];
-        newNPCGrid[props.value.id] = bombingResult;
-        props.value.setNPCGrid(newNPCGrid);
+    const setLocationStatus = (bombingResult) => {
+        let newNPCGrid = [...NPCGrid];
+        newNPCGrid[id] = bombingResult;
+        setNPCGrid(newNPCGrid);
     }
 
     const onClick = () => {
-        if (props.value.userTurn){
+        if (userTurn){
             if(location === EMPTY_LOCATION){
-                bombLocation(MISS);
-                props.value.toggleTurn();
+                setLocationStatus(MISS);
+                toggleTurn();
             }else if(location === BOAT_LOCATION){
-                bombLocation(HIT);
+                setLocationStatus(HIT);
             }
         }
     }
 
     return (
-        <button className="square" onClick={onClick}>{location}</button>
+        <button className="square" onClick={onClick}>{
+            (location === HIT || location === MISS) ? location : ''
+        }</button>
     )
 }
